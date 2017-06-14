@@ -38,6 +38,11 @@ class StatusViewController: UIViewController {
         
         self.fetch()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animaetd)
+        self.fetch()
+    }
 
     func fetch() {
         
