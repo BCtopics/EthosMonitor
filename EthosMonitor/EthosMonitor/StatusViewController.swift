@@ -10,13 +10,15 @@ import UIKit
 import UserNotifications
 
 class StatusViewController: UIViewController {
+    
+    static let shared = StatusViewController()
 
     //MARK: - Timer
     
     var timer: DispatchSourceTimer?
     
     func startTimer() {
-        let queue = DispatchQueue(label: "com.domain.app.ethosMonitor")  // you can also use `DispatchQueue.main`, if you want
+        let queue = DispatchQueue(label: "com.domain.app.ethosMonitor")
         timer = DispatchSource.makeTimerSource(queue: queue)
         timer!.scheduleRepeating(deadline: .now(), interval: .seconds(120))
         timer!.setEventHandler { [weak self] in
@@ -63,9 +65,10 @@ class StatusViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        NSLog("Timer Started")
         startTimer()
     }
 
