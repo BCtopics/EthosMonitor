@@ -7,12 +7,35 @@
 //
 
 import UIKit
+import UserNotifications
 
 class StatusViewController: UIViewController {
 
+    fileprivate let userNotificationIdentifier = "statusChangedNotification"
+    
+    func scheduleLocalNotification() {
+        
+        let notificationContent = UNMutableNotificationContent()
+        notificationContent.title = "Status Changed"
+        notificationContent.body = "Status Changed"
+        
+        let fireDate = Date(timeInterval: 1, since: Date())
+        
+        let dateComponenets = Calendar.current.dateComponents([.minute, .second], from: fireDate)
+        let dateTrigger = UNCalendarNotificationTrigger(dateMatching: dateComponenets, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: userNotificationIdentifier, content: notificationContent, trigger: dateTrigger)
+        
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if let error = error {
+                NSLog("Unable to add notification request. \(error.localizedDescription)")
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.fetch()
     }
 
@@ -32,6 +55,8 @@ class StatusViewController: UIViewController {
             if status.aliveGPUS != status.totalGPUS {
                 DispatchQueue.main.async {
                     
+                    self.scheduleLocalNotification()
+                    
                     self.statusTexLabel.text = "Miner is down"
                     self.statusTexLabel.textColor = .red
                 }
@@ -39,7 +64,6 @@ class StatusViewController: UIViewController {
             }
             
         }
-        
     }
     
     //MARK: - IBOutlets
