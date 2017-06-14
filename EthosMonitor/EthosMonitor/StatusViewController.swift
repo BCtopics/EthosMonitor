@@ -10,13 +10,32 @@ import UIKit
 import UserNotifications
 
 class StatusViewController: UIViewController {
+
+    //MARK: - Timer
+    
+    var timer: DispatchSourceTimer?
     
     func startTimer() {
-        _ = Timer.scheduledTimer(withTimeInterval: 120.0, repeats: true) { [weak self] _ in
+        let queue = DispatchQueue(label: "com.domain.app.ethosMonitor")  // you can also use `DispatchQueue.main`, if you want
+        timer = DispatchSource.makeTimerSource(queue: queue)
+        timer!.scheduleRepeating(deadline: .now(), interval: .seconds(120))
+        timer!.setEventHandler { [weak self] in
             self?.fetch()
         }
+        timer!.resume()
     }
-
+    
+    func stopTimer() {
+        timer?.cancel()
+        timer = nil
+    }
+    
+    deinit {
+        self.stopTimer()
+    }
+    
+    //MARK: - Notifications
+    
     fileprivate let userNotificationIdentifier = "statusChangedNotification"
     
     func scheduleLocalNotification() {
@@ -39,17 +58,19 @@ class StatusViewController: UIViewController {
         }
     }
     
+    //MARK: - General Functions
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        startTimer()
-        self.fetch()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.fetch()
+        startTimer()
     }
 
+    //MARK: - Fetch Request
+    
     func fetch() {
         
         StatusController.fetchStatus { (status) in
