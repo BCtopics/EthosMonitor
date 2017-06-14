@@ -10,6 +10,12 @@ import UIKit
 import UserNotifications
 
 class StatusViewController: UIViewController {
+    
+    func startTimer() {
+        _ = Timer.scheduledTimer(withTimeInterval: 120.0, repeats: true) { [weak self] _ in
+            self?.fetch()
+        }
+    }
 
     fileprivate let userNotificationIdentifier = "statusChangedNotification"
     
@@ -35,12 +41,12 @@ class StatusViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        startTimer()
         self.fetch()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animaetd)
+        super.viewWillAppear(animated)
         self.fetch()
     }
 
